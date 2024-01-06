@@ -69,4 +69,4 @@ const getCountryData = country => {
     })
 }
 
-getCountryData('germany')
+getCountryData('germany');

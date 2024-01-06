@@ -6,7 +6,7 @@ const countriesContainer = document.querySelector('.countries');
 ///////////////////////////////////////
 
 // OLD SCHOOL
-const renderCountry = function(data, className = '') {
+const renderCountry = (data, className = '') => {
     const html = `
         <article class="country ${className}">
             <img class="country__img" src="${data.flags.png}" />
@@ -21,34 +21,52 @@ const renderCountry = function(data, className = '') {
     countriesContainer.style.opacity = 1;
 }
 
-const getCountryData = function(country) {
-    const request = new XMLHttpRequest();
-    request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
-    request.send();
+// const getCountryData = function(country) {
+//     const request = new XMLHttpRequest();
+//     request.open('GET', `https://restcountries.com/v3.1/name/${country}`);
+//     request.send();
 
-    request.addEventListener('load', function(){
-        const data = JSON.parse(this.responseText)[0]
-        console.log(data)
+//     request.addEventListener('load', function(){
+//         const data = JSON.parse(this.responseText)[0]
+//         console.log(data)
 
-        renderCountry(data)
+//         renderCountry(data)
 
-        // get neighbour country
-        const [neighbour] = data.borders
+//         // get neighbour country
+//         const [neighbour] = data.borders
 
-        if(!neighbour) return
+//         if(!neighbour) return
 
-        const request2 = new XMLHttpRequest();
-        request2.open('GET', `https://restcountries.com/v3.1/alpha/${neighbour}`);
-        request2.send();
+//         const request2 = new XMLHttpRequest();
+//         request2.open('GET', `https://restcountries.com/v3.1/alpha/${neighbour}`);
+//         request2.send();
 
-        request2.addEventListener('load', function(){
-            const data = JSON.parse(this.responseText)[0]
+//         request2.addEventListener('load', function(){
+//             const data = JSON.parse(this.responseText)[0]
     
-            renderCountry(data, 'neighbour')
-        })
+//             renderCountry(data, 'neighbour')
+//         })
+//     })
+// }
+
+// getCountryData('portugal')
+// getCountryData('australia')
+// getCountryData('japan')
+
+
+const getCountryData = country => {
+    fetch(`https://restcountries.com/v3.1/name/${country}`)
+    .then(res => res.json())
+    .then(data => {
+        renderCountry(data[0])
+        const neighbour = data[0].borders?.[0]
+        if (!neighbour) return
+        return fetch(`https://restcountries.com/v3.1/alpha/${neighbour}`)
+    })
+    .then(res=> res.json())
+    .then(data => {
+        renderCountry(data[0], 'neighbour')
     })
 }
 
-getCountryData('portugal')
-// getCountryData('australia')
-// getCountryData('japan')
+getCountryData('germany')
